@@ -1,0 +1,1843 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsible Betting Advisor</title>
+  <style>
+    :root {
+      --px-bg: #0b0f13;
+      --px-surface: #11161d;
+      --px-card: #151a22;
+      --px-border: #273043;
+      --px-text: #e6edf5;
+      --px-text-subtle: #b6c2cf;
+      --px-accent: #6aa5ff;
+      --px-green: #2ecc71;
+      --px-yellow: #f1c40f;
+      --px-red: #e74c3c;
+      --px-shadow: 0 6px 24px rgba(0,0,0,0.35);
+      --px-radius: 14px;
+      --px-spacing: 16px;
+      --px-spacing-sm: 10px;
+      --px-spacing-lg: 22px;
+      --px-input: #0f141b;
+      --px-focus: #8bc1ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--px-bg), #0e1420 50%, var(--px-bg));
+      color: var(--px-text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--px-spacing-lg);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--px-spacing);
+      padding: var(--px-spacing-lg) 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--px-spacing);
+    }
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: radial-gradient(120% 120% at 30% 20%, #6aa5ff 0%, #5f8cff 35%, #324b80 70%, #182235 100%);
+      box-shadow: 0 10px 30px rgba(106,165,255,0.25);
+    }
+    .title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .subtitle {
+      color: var(--px-text-subtle);
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: var(--px-spacing-lg);
+    }
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--px-card);
+      border: 1px solid var(--px-border);
+      border-radius: var(--px-radius);
+      box-shadow: var(--px-shadow);
+    }
+    .card-header {
+      padding: var(--px-spacing-lg);
+      border-bottom: 1px solid var(--px-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .card-body { padding: var(--px-spacing-lg); }
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--px-spacing); }
+    @media (max-width: 640px) { .input-row { grid-template-columns: 1fr; } }
+    label { display: block; font-size: 12px; color: var(--px-text-subtle); margin-bottom: 6px; }
+    select, input[type="number"], textarea {
+      width: 100%;
+      background: var(--px-input);
+      color: var(--px-text);
+      border: 1px solid var(--px-border);
+      border-radius: 10px;
+      padding: 12px 12px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    select:focus, input[type="number"]:focus, textarea:focus {
+      border-color: var(--px-focus);
+      box-shadow: 0 0 0 3px rgba(139,193,255,0.15);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--px-spacing); margin-top: var(--px-spacing-lg); }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--px-border);
+      background: linear-gradient(180deg, #1a2230, #141a24);
+      color: var(--px-text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: #395078; box-shadow: 0 10px 24px rgba(0,0,0,0.25); }
+    .btn-primary { border-color: #3b69a8; background: linear-gradient(180deg, #2a4a74, #1c2f4a); color: #eaf3ff; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 20px;
+      border: 1px solid var(--px-border);
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--px-text);
+      background: #121922;
+    }
+    .risk {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      border: 1px solid var(--px-border);
+    }
+    .risk-low { color: #21d07a; background: linear-gradient(180deg, #21d07a1a, #0b1a131a); border-color: #1ea86a; }
+    .risk-moderate { color: #f1c40f; background: linear-gradient(180deg, #f1c40f22, #1a160b1a); border-color: #d1a90d; }
+    .risk-high { color: #e74c3c; background: linear-gradient(180deg, #e74c3c22, #1a0b0c1a); border-color: #cf3c2e; }
+    .recommendation {
+      text-align: center;
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 2px solid;
+    }
+    .recommendation-bet {
+      background: linear-gradient(180deg, #21d07a15, #0b1a130d);
+      border-color: #21d07a;
+      color: #21d07a;
+    }
+    .recommendation-dont-bet {
+      background: linear-gradient(180deg, #e74c3c15, #1a0b0c0d);
+      border-color: #e74c3c;
+      color: #e74c3c;
+    }
+    .recommendation-caution {
+      background: linear-gradient(180deg, #f1c40f15, #1a160b0d);
+      border-color: #f1c40f;
+      color: #f1c40f;
+    }
+    .recommendation-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .recommendation-reason {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--px-text);
+      margin-bottom: 16px;
+    }
+    .confidence-score {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--px-card);
+      border: 1px solid var(--px-border);
+    }
+    .list { display: grid; gap: 10px; }
+    .list-item { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #3b69a8; margin-top: 4px; }
+    .dot-alt { background: #6aa5ff; }
+    .stat {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+      background: #101722; border: 1px solid var(--px-border); border-radius: 10px; padding: 10px 12px; color: var(--px-text);
+    }
+    .card-footer { padding: var(--px-spacing-lg); border-top: 1px solid var(--px-border); display: flex; justify-content: flex-end; }
+    .pill { padding: 4px 8px; border-radius: 999px; font-size: 12px; border: 1px solid var(--px-border); background: #101722; color: var(--px-text); }
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--px-spacing); }
+    .example-btn { font-size: 12px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--px-spacing); }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+    .muted { color: var(--px-text-subtle); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">Responsible Betting Advisor</div>
+          <div class="subtitle">AI-powered betting advisor with real-time game data</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card" id="input-card">
+        <div class="card-header">
+          <div class="card-title">Betting Scenario</div>
+          <span class="pill">Demo • No data stored</span>
+        </div>
+        <div class="card-body">
+          <form id="bet-form">
+            <div class="input-row">
+              <div>
+                <label>Sport/Event</label>
+                <select id="sport">
+                  <optgroup label="🏈 American Football">
+                    <option>NFL</option>
+                  </optgroup>
+                  <optgroup label="🏀 Basketball">
+                    <option>NBA</option>
+                    <option>NCAA Basketball</option>
+                  </optgroup>
+                  <optgroup label="⚾ Baseball">
+                    <option>MLB</option>
+                    <option>NCAA Baseball</option>
+                  </optgroup>
+                  <optgroup label="🏒 Hockey">
+                    <option>NHL</option>
+                    <option>ICE_HOCKEY</option>
+                  </optgroup>
+                  <optgroup label="⚽ Soccer">
+                    <option>Premier League</option>
+                    <option>La Liga</option>
+                    <option>MLS</option>
+                    <option>Champions League</option>
+                  </optgroup>
+                  <optgroup label="🎾 Tennis">
+                    <option>ATP</option>
+                    <option>WTA</option>
+                    <option>Grand Slam</option>
+                  </optgroup>
+                  <optgroup label="🥊 Other Sports">
+                    <option>MMA/UFC</option>
+                    <option>Boxing</option>
+                    <option>Golf</option>
+                    <option>Other</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div>
+                <label>Current Game</label>
+                <select id="currentGame">
+                  <option value="">Select a current game...</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-row">
+              <div>
+                <label>Bet Type</label>
+                <select id="betType">
+                  <option>Moneyline</option>
+                  <option>Spread</option>
+                  <option>Over/Under</option>
+                  <option>Parlay</option>
+                </select>
+              </div>
+              <div>
+                <label>Odds/Line</label>
+                <input id="odds" type="text" placeholder="Auto-filled from game data" readonly style="background: #0a0e14; color: #6aa5ff;">
+              </div>
+            </div>
+            <div class="input-row">
+              <div>
+                <label>Proposed Bet Amount ($)</label>
+                <input id="betAmount" type="number" min="0" step="1" placeholder="e.g., 50">
+              </div>
+              <div>
+                <label>Weekly Gambling Budget ($)</label>
+                <input id="budget" type="number" min="0" step="1" placeholder="e.g., 500">
+              </div>
+            </div>
+            <div class="input-row">
+              <div>
+                <label>Favorite Team</label>
+                <select id="favoriteTeam">
+                  <option value="">Select team...</option>
+                </select>
+              </div>
+              <div>
+                <label>Underdog Team</label>
+                <select id="underdogTeam">
+                  <option value="">Select team...</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-row">
+              <div>
+                <label>Favorite Record (W-L)</label>
+                <input id="favoriteRecord" type="text" placeholder="Auto-filled from team data" readonly style="background: #0a0e14; color: #6aa5ff;">
+              </div>
+              <div>
+                <label>Underdog Record (W-L)</label>
+                <input id="underdogRecord" type="text" placeholder="Auto-filled from team data" readonly style="background: #0a0e14; color: #6aa5ff;">
+              </div>
+            </div>
+            <div class="input-row">
+              <div>
+                <label>Key Injuries</label>
+                <input id="injuries" type="text" placeholder="Auto-filled from team data" readonly style="background: #0a0e14; color: #6aa5ff;">
+              </div>
+              <div>
+                <label>Weather/Conditions</label>
+                <input id="weather" type="text" placeholder="Auto-filled from team data" readonly style="background: #0a0e14; color: #6aa5ff;">
+              </div>
+            </div>
+            <div>
+              <label>Recent Betting History</label>
+              <textarea id="history" placeholder="e.g., Won $50 yesterday or Lost 3 bets this week"></textarea>
+            </div>
+            <div class="input-row">
+              <div>
+                <label>How are you feeling right now?</label>
+                <select id="currentEmotion">
+                  <option>Neutral/Calm</option>
+                  <option>Happy/Excited</option>
+                  <option>Confident/Optimistic</option>
+                  <option>Frustrated/Annoyed</option>
+                  <option>Sad/Disappointed</option>
+                  <option>Anxious/Stressed</option>
+                  <option>Angry/Upset</option>
+                  <option>Greedy/Feeling Lucky</option>
+                  <option>Desperate/Need to Win</option>
+                </select>
+              </div>
+              <div>
+                <label>Last bet outcome</label>
+                <select id="lastOutcome">
+                  <option>Won (feeling good)</option>
+                  <option>Lost (feeling frustrated)</option>
+                  <option>Push/Tie</option>
+                  <option>Haven't bet recently</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label>Emotional triggers (what's making you want to bet?)</label>
+              <textarea id="emotionalTriggers" placeholder="e.g., I need to win back my losses, I'm feeling lucky, I want to celebrate, I'm bored"></textarea>
+            </div>
+            <div>
+              <label>Betting Slip (optional) - Upload or paste your DraftKings/FanDuel slip</label>
+              <textarea id="bettingSlip" placeholder="Paste your betting slip details here, or describe your current/past bets (e.g., $50 parlay: Lakers -3, Cowboys +7, Over 45)"></textarea>
+            </div>
+            <div>
+              <label>User Notes/Reasoning</label>
+              <textarea id="notes" placeholder="e.g., Team has strong defense, great home record"></textarea>
+            </div>
+            <div class="actions">
+              <button type="submit" class="btn btn-primary" id="analyzeBtn">Analyze Scenario</button>
+              <button type="button" class="btn" id="resetBtn">Reset</button>
+            </div>
+            <div class="examples">
+              <button type="button" class="btn example-btn" data-example="low">Load LOW RISK example</button>
+              <button type="button" class="btn example-btn" data-example="moderate">Load MODERATE RISK example</button>
+              <button type="button" class="btn example-btn" data-example="high">Load HIGH RISK example</button>
+            </div>
+            <div style="margin-top:12px" class="muted">This advisor is informational and does not provide financial advice.</div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card" id="recommendation-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title">Betting Recommendation</div>
+          <span class="badge"><span>Unified AI</span><span style="color:#6aa5ff">Smart Analysis</span></span>
+        </div>
+        <div class="card-body" id="recommendation-body">
+          <div class="muted">Submit a scenario to get a clear betting recommendation.</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card" id="analytical-card">
+          <div class="card-header">
+            <div class="card-title">Analytical Assessment</div>
+            <span class="badge"><span>Agent 1</span><span style="color:#6aa5ff">Analytical</span></span>
+          </div>
+          <div class="card-body" id="analytical-body">
+            <div class="muted">Submit a scenario to see analysis.</div>
+          </div>
+        </div>
+        <div class="card" id="safety-card">
+          <div class="card-header">
+            <div class="card-title">Safety Check</div>
+            <span class="badge"><span>Agent 2</span><span style="color:#6aa5ff">Harm Reduction</span></span>
+          </div>
+          <div class="card-body" id="safety-body">
+            <div class="muted">Risk level and recommendations will appear here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('bet-form');
+    const sportEl = document.getElementById('sport');
+    const currentGameEl = document.getElementById('currentGame');
+    const betTypeEl = document.getElementById('betType');
+    const oddsEl = document.getElementById('odds');
+    const betAmountEl = document.getElementById('betAmount');
+    const budgetEl = document.getElementById('budget');
+    const favoriteTeamEl = document.getElementById('favoriteTeam');
+    const underdogTeamEl = document.getElementById('underdogTeam');
+    const favoriteRecordEl = document.getElementById('favoriteRecord');
+    const underdogRecordEl = document.getElementById('underdogRecord');
+    const injuriesEl = document.getElementById('injuries');
+    const weatherEl = document.getElementById('weather');
+    const currentEmotionEl = document.getElementById('currentEmotion');
+    const lastOutcomeEl = document.getElementById('lastOutcome');
+    const emotionalTriggersEl = document.getElementById('emotionalTriggers');
+    const bettingSlipEl = document.getElementById('bettingSlip');
+    const historyEl = document.getElementById('history');
+    const notesEl = document.getElementById('notes');
+    const analyticalBody = document.getElementById('analytical-body');
+    const safetyBody = document.getElementById('safety-body');
+    const safetyCard = document.getElementById('safety-card');
+    const recommendationBody = document.getElementById('recommendation-body');
+    const recommendationCard = document.getElementById('recommendation-card');
+
+    const scenarios = {
+      low: {
+        sport: 'NBA',
+        betType: 'Moneyline',
+        betAmount: 20,
+        budget: 500,
+        favoriteTeam: 'Lakers',
+        underdogTeam: 'Warriors',
+        favoriteRecord: '8-2',
+        underdogRecord: '5-5',
+        injuries: 'No major injuries',
+        weather: 'Indoor game',
+        currentEmotion: 'Neutral/Calm',
+        lastOutcome: 'Won (feeling good)',
+        emotionalTriggers: 'Just enjoying the game, no pressure',
+        bettingSlip: '',
+        history: 'No recent losses, casual bettor, single game',
+        notes: 'Lakers at home, strong defense, Warriors on back-to-back'
+      },
+      moderate: {
+        sport: 'NFL',
+        betType: 'Spread',
+        betAmount: 75,
+        budget: 400,
+        favoriteTeam: 'Cowboys',
+        underdogTeam: 'Giants',
+        favoriteRecord: '6-3',
+        underdogRecord: '4-5',
+        injuries: 'Cowboys QB questionable',
+        weather: 'Clear, 65°F',
+        currentEmotion: 'Frustrated/Annoyed',
+        lastOutcome: 'Lost (feeling frustrated)',
+        emotionalTriggers: 'Want to win back yesterday\'s loss, feeling unlucky',
+        bettingSlip: '$75 Cowboys -3.5',
+        history: 'Lost one bet yesterday',
+        notes: 'Cowboys -3.5, home field advantage, division rivalry'
+      },
+      high: {
+        sport: 'Soccer',
+        betType: 'Parlay',
+        betAmount: 200,
+        budget: 500,
+        favoriteTeam: 'Man City',
+        underdogTeam: 'Burnley',
+        favoriteRecord: '7-1-2',
+        underdogRecord: '2-3-7',
+        injuries: 'Man City striker out',
+        weather: 'Rainy, 45°F',
+        currentEmotion: 'Desperate/Need to Win',
+        lastOutcome: 'Lost (feeling frustrated)',
+        emotionalTriggers: 'Lost 3 bets this week, need to win it back, feeling desperate',
+        bettingSlip: '$200 parlay: Man City win + Over 2.5 goals - BIG PLAY TO RECOUP LOSSES',
+        history: 'Lost 3 bets this week, need to win it back',
+        notes: 'High-odds parlay: Man City win + Over 2.5 goals, big play to recoup losses'
+      }
+    };
+
+    document.querySelectorAll('.example-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ex = scenarios[btn.dataset.example];
+        sportEl.value = ex.sport;
+        betTypeEl.value = ex.betType;
+        betAmountEl.value = ex.betAmount;
+        budgetEl.value = ex.budget;
+        currentEmotionEl.value = ex.currentEmotion;
+        lastOutcomeEl.value = ex.lastOutcome;
+        emotionalTriggersEl.value = ex.emotionalTriggers;
+        bettingSlipEl.value = ex.bettingSlip;
+        historyEl.value = ex.history;
+        notesEl.value = ex.notes;
+        
+        // Update team dropdowns for the selected sport
+        populateTeamDropdowns(ex.sport);
+        
+        // Set team values and trigger auto-fill
+        setTimeout(() => {
+          favoriteTeamEl.value = ex.favoriteTeam;
+          underdogTeamEl.value = ex.underdogTeam;
+          autoFillGameData();
+        }, 100);
+      });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      sportEl.value = 'ICE_HOCKEY';
+      currentGameEl.value = '';
+      betTypeEl.value = 'Moneyline';
+      oddsEl.value = '';
+      betAmountEl.value = '';
+      budgetEl.value = '';
+      favoriteTeamEl.value = '';
+      underdogTeamEl.value = '';
+      favoriteRecordEl.value = '';
+      underdogRecordEl.value = '';
+      injuriesEl.value = '';
+      weatherEl.value = '';
+      currentEmotionEl.value = 'Neutral/Calm';
+      lastOutcomeEl.value = 'Haven\'t bet recently';
+      emotionalTriggersEl.value = '';
+      bettingSlipEl.value = '';
+      historyEl.value = '';
+      notesEl.value = '';
+      analyticalBody.innerHTML = '<div class="muted">Submit a scenario to see analysis.</div>';
+      safetyBody.innerHTML = '<div class="muted">Risk level and recommendations will appear here.</div>';
+      recommendationBody.innerHTML = '<div class="muted">Submit a scenario to get a clear betting recommendation.</div>';
+      safetyCard.classList.remove('risk-low','risk-moderate','risk-high');
+      recommendationCard.classList.remove('recommendation-bet','recommendation-dont-bet','recommendation-caution');
+      
+      // Reset team dropdowns and current games
+      populateTeamDropdowns('ICE_HOCKEY');
+      populateCurrentGames('ICE_HOCKEY');
+    });
+
+    // Auto-fill functionality
+    sportEl.addEventListener('change', async () => {
+      populateTeamDropdowns(sportEl.value);
+      await populateCurrentGames(sportEl.value);
+      autoFillGameData();
+    });
+
+    currentGameEl.addEventListener('change', handleGameSelection);
+    betTypeEl.addEventListener('change', () => {
+      if (currentGameEl.value) {
+        try {
+          const gameData = JSON.parse(currentGameEl.value);
+          updateOddsBasedOnBetType(gameData);
+        } catch (error) {
+          console.error('Error updating odds:', error);
+        }
+      }
+    });
+
+    favoriteTeamEl.addEventListener('change', autoFillGameData);
+    underdogTeamEl.addEventListener('change', autoFillGameData);
+
+    function normalize(text) { return (text || '').toLowerCase(); }
+
+    // Real Sports API Integration
+    const API_KEY = 'RAPIDAPI_KEY_PLACEHOLDER';
+    const API_HOST = 'sportsbook-api2.p.rapidapi.com';
+    
+    // Cache for API data to reduce calls
+    let apiCache = {};
+    
+    async function fetchSportsData(endpoint, params = {}) {
+      const cacheKey = `${endpoint}-${JSON.stringify(params)}`;
+      if (apiCache[cacheKey]) {
+        return apiCache[cacheKey];
+      }
+      
+      try {
+        const url = new URL(`https://${API_HOST}${endpoint}`);
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'x-rapidapi-host': API_HOST,
+            'x-rapidapi-key': API_KEY
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        apiCache[cacheKey] = data;
+        return data;
+      } catch (error) {
+        console.error('Sports API Error:', error);
+        return null;
+      }
+    }
+    
+    async function getCurrentGames(sport) {
+      // Try to get arbitrage data which includes current games and odds
+      const arbitrageData = await fetchSportsData('/v0/advantages/', { type: 'ARBITRAGE' });
+      
+      if (!arbitrageData || !arbitrageData.advantages) {
+        return getMockGames(sport); // Fallback to mock data
+      }
+      
+      // Map user-friendly sport names to API sport names
+      const sportMapping = {
+        'NFL': 'AMERICAN_FOOTBALL',
+        'NBA': 'BASKETBALL',
+        'MLB': 'BASEBALL',
+        'NHL': 'ICE_HOCKEY',
+        'ICE_HOCKEY': 'ICE_HOCKEY',
+        'Premier League': 'SOCCER',
+        'La Liga': 'SOCCER',
+        'MLS': 'SOCCER',
+        'Champions League': 'SOCCER',
+        'ATP': 'TENNIS',
+        'WTA': 'TENNIS',
+        'Grand Slam': 'TENNIS',
+        'NCAA Basketball': 'BASKETBALL',
+        'NCAA Baseball': 'BASEBALL',
+        'MMA/UFC': 'MMA',
+        'Boxing': 'BOXING',
+        'Golf': 'GOLF'
+      };
+      
+      const apiSportName = sportMapping[sport] || sport;
+      
+      // Filter games by sport - the API uses sport names like "ICE_HOCKEY"
+      const sportGames = arbitrageData.advantages.filter(advantage => {
+        const event = advantage.market?.event;
+        if (!event) return false;
+        
+        // Check participants for sport info
+        const participants = event.participants || [];
+        if (participants.length > 0) {
+          const participant = participants[0]; // First participant
+          if (participant.sport) {
+            return participant.sport.toLowerCase() === apiSportName.toLowerCase() ||
+                   participant.sport.toLowerCase().includes(apiSportName.toLowerCase());
+          }
+        }
+        
+        // Check competition instance
+        const competitionInstance = event.competitionInstance;
+        if (competitionInstance?.competition?.sport) {
+          return competitionInstance.competition.sport.toLowerCase() === apiSportName.toLowerCase() ||
+                 competitionInstance.competition.sport.toLowerCase().includes(apiSportName.toLowerCase());
+        }
+        
+        return false;
+      }).map(advantage => {
+        const event = advantage.market.event;
+        const participants = event.participants || [];
+        
+        // Extract home and away teams
+        let homeTeam = 'Unknown';
+        let awayTeam = 'Unknown';
+        
+        if (participants.length >= 2) {
+          // Assume first is away, second is home (common format)
+          awayTeam = participants[0].name || participants[0];
+          homeTeam = participants[1].name || participants[1];
+        } else if (event.name) {
+          // Parse from event name like "Team A @ Team B"
+          const match = event.name.match(/(.+?)\s*@\s*(.+)/);
+          if (match) {
+            awayTeam = match[1].trim();
+            homeTeam = match[2].trim();
+          }
+        }
+        
+        return {
+          home_team: homeTeam,
+          away_team: awayTeam,
+          time: event.startTime ? new Date(event.startTime).toLocaleTimeString() : 'TBD',
+          spread: 'Check sportsbook', // Would need to parse from outcomes
+          total: 'Check sportsbook', // Would need to parse from outcomes
+          moneyline: 'Check sportsbook' // Would need to parse from outcomes
+        };
+      });
+      
+      return sportGames.length > 0 ? sportGames : getMockGames(sport);
+    }
+    
+    async function getTeamRoster(teamName) {
+      // This would be a separate API call for team details
+      // For now, return mock roster data
+      return getMockTeamData(teamName);
+    }
+    
+    function getMockGames(sport) {
+      const mockData = {
+        'NFL': [
+          {
+            home_team: 'Kansas City Chiefs',
+            away_team: 'Las Vegas Raiders',
+            time: '1:00 PM ET',
+            spread: 'Chiefs -7.5',
+            total: '48.5',
+            moneyline: 'Chiefs -350, Raiders +280'
+          },
+          {
+            home_team: 'Philadelphia Eagles', 
+            away_team: 'Dallas Cowboys',
+            time: '4:25 PM ET',
+            spread: 'Eagles -3',
+            total: '51.5',
+            moneyline: 'Eagles -160, Cowboys +140'
+          }
+        ],
+        'NBA': [
+          {
+            home_team: 'Boston Celtics',
+            away_team: 'Los Angeles Lakers', 
+            time: '7:30 PM ET',
+            spread: 'Celtics -5.5',
+            total: '228.5',
+            moneyline: 'Celtics -220, Lakers +185'
+          },
+          {
+            home_team: 'Golden State Warriors',
+            away_team: 'Phoenix Suns',
+            time: '10:00 PM ET', 
+            spread: 'Warriors -2',
+            total: '234.5',
+            moneyline: 'Warriors -130, Suns +110'
+          }
+        ],
+        'MLB': [
+          {
+            home_team: 'Los Angeles Dodgers',
+            away_team: 'San Francisco Giants',
+            time: '10:10 PM ET',
+            spread: 'Dodgers -1.5 (+120)',
+            total: '8.5',
+            moneyline: 'Dodgers -180, Giants +160'
+          },
+          {
+            home_team: 'New York Yankees',
+            away_team: 'Boston Red Sox',
+            time: '7:05 PM ET',
+            spread: 'Yankees -1.5 (+110)',
+            total: '9.0',
+            moneyline: 'Yankees -170, Red Sox +150'
+          }
+        ],
+        'NHL': [
+          {
+            home_team: 'New York Rangers',
+            away_team: 'Utah Mammoth',
+            time: '9:00 PM ET',
+            spread: 'Rangers -1.5',
+            total: '6.5',
+            moneyline: 'Rangers -180, Mammoth +160'
+          },
+          {
+            home_team: 'Tampa Bay Lightning',
+            away_team: 'Washington Capitals',
+            time: '7:00 PM ET',
+            spread: 'Lightning -1.5',
+            total: '6.0',
+            moneyline: 'Lightning -200, Capitals +170'
+          }
+        ],
+        'ICE_HOCKEY': [
+          {
+            home_team: 'New York Rangers',
+            away_team: 'Utah Mammoth',
+            time: '9:00 PM ET',
+            spread: 'Rangers -1.5',
+            total: '6.5',
+            moneyline: 'Rangers -180, Mammoth +160'
+          },
+          {
+            home_team: 'Tampa Bay Lightning',
+            away_team: 'Washington Capitals',
+            time: '7:00 PM ET',
+            spread: 'Lightning -1.5',
+            total: '6.0',
+            moneyline: 'Lightning -200, Capitals +170'
+          }
+        ],
+        'Premier League': [
+          {
+            home_team: 'Manchester City',
+            away_team: 'Burnley',
+            time: '10:00 AM ET',
+            spread: 'Man City -2.5',
+            total: '3.5',
+            moneyline: 'Man City -450, Burnley +900'
+          },
+          {
+            home_team: 'Arsenal',
+            away_team: 'Chelsea',
+            time: '12:30 PM ET',
+            spread: 'Pick em',
+            total: '2.5',
+            moneyline: 'Arsenal +120, Chelsea +120'
+          }
+        ],
+        'La Liga': [
+          {
+            home_team: 'Real Madrid',
+            away_team: 'Barcelona',
+            time: '3:00 PM ET',
+            spread: 'Pick em',
+            total: '2.5',
+            moneyline: 'Real Madrid +110, Barcelona +110'
+          },
+          {
+            home_team: 'Atletico Madrid',
+            away_team: 'Sevilla',
+            time: '12:00 PM ET',
+            spread: 'Atletico -1',
+            total: '2.0',
+            moneyline: 'Atletico -200, Sevilla +175'
+          }
+        ],
+        'MLS': [
+          {
+            home_team: 'LA Galaxy',
+            away_team: 'LAFC',
+            time: '10:30 PM ET',
+            spread: 'Pick em',
+            total: '2.5',
+            moneyline: 'Galaxy +120, LAFC +120'
+          },
+          {
+            home_team: 'Inter Miami',
+            away_team: 'New York Red Bulls',
+            time: '7:30 PM ET',
+            spread: 'Inter Miami -0.5',
+            total: '2.5',
+            moneyline: 'Inter Miami -150, Red Bulls +130'
+          }
+        ],
+        'Champions League': [
+          {
+            home_team: 'Bayern Munich',
+            away_team: 'PSG',
+            time: '3:00 PM ET',
+            spread: 'Pick em',
+            total: '3.0',
+            moneyline: 'Bayern +120, PSG +120'
+          }
+        ],
+        'ATP': [
+          {
+            home_team: 'Novak Djokovic',
+            away_team: 'Carlos Alcaraz',
+            time: '3:00 PM ET',
+            spread: 'Djokovic -3.5 games',
+            total: '22.5 games',
+            moneyline: 'Djokovic -200, Alcaraz +170'
+          },
+          {
+            home_team: 'Rafael Nadal',
+            away_team: 'Daniil Medvedev',
+            time: '1:00 PM ET',
+            spread: 'Nadal -2 games',
+            total: '21.5 games',
+            moneyline: 'Nadal -180, Medvedev +155'
+          }
+        ],
+        'WTA': [
+          {
+            home_team: 'Iga Swiatek',
+            away_team: 'Aryna Sabalenka',
+            time: '12:00 PM ET',
+            spread: 'Swiatek -2.5 games',
+            total: '20.5 games',
+            moneyline: 'Swiatek -190, Sabalenka +165'
+          }
+        ],
+        'Grand Slam': [
+          {
+            home_team: 'Novak Djokovic',
+            away_team: 'Carlos Alcaraz',
+            time: '3:00 PM ET',
+            spread: 'Djokovic -3.5 games',
+            total: '22.5 games',
+            moneyline: 'Djokovic -200, Alcaraz +170'
+          }
+        ],
+        'NCAA Basketball': [
+          {
+            home_team: 'Duke Blue Devils',
+            away_team: 'North Carolina Tar Heels',
+            time: '9:00 PM ET',
+            spread: 'Duke -3.5',
+            total: '145.5',
+            moneyline: 'Duke -170, UNC +150'
+          },
+          {
+            home_team: 'Kansas Jayhawks',
+            away_team: 'Kentucky Wildcats',
+            time: '8:00 PM ET',
+            spread: 'Kansas -2',
+            total: '142.5',
+            moneyline: 'Kansas -130, Kentucky +110'
+          }
+        ],
+        'NCAA Baseball': [
+          {
+            home_team: 'Vanderbilt Commodores',
+            away_team: 'Tennessee Volunteers',
+            time: '7:00 PM ET',
+            spread: 'Vanderbilt -1.5 (+120)',
+            total: '8.5',
+            moneyline: 'Vanderbilt -180, Tennessee +160'
+          }
+        ],
+        'MMA/UFC': [
+          {
+            home_team: 'Jon Jones',
+            away_team: 'Stipe Miocic',
+            time: '10:00 PM ET',
+            spread: 'Jones -250',
+            total: 'N/A',
+            moneyline: 'Jones -250, Miocic +200'
+          }
+        ],
+        'Boxing': [
+          {
+            home_team: 'Tyson Fury',
+            away_team: 'Oleksandr Usyk',
+            time: '9:00 PM ET',
+            spread: 'Fury -180',
+            total: 'N/A',
+            moneyline: 'Fury -180, Usyk +150'
+          }
+        ],
+        'Golf': [
+          {
+            home_team: 'Scottie Scheffler',
+            away_team: 'Rory McIlroy',
+            time: '2:00 PM ET',
+            spread: 'Scheffler -120',
+            total: 'N/A',
+            moneyline: 'Scheffler -120, McIlroy +100'
+          }
+        ]
+      };
+      
+      return mockData[sport] || mockData['NFL'] || []; // Default to NFL if sport not found
+    }
+    
+    function getMockTeamData(teamName) {
+      const teamDatabase = {
+        // NHL Teams
+        'New York Rangers': { record: '12-6-2', injuries: 'No major injuries', form: 'W-W-L-W-W' },
+        'Utah Mammoth': { record: '8-10-1', injuries: 'Starting goalie questionable', form: 'L-L-W-L-W' },
+        'Tampa Bay Lightning': { record: '11-7-1', injuries: 'Top defenseman out', form: 'W-L-W-W-L' },
+        'Washington Capitals': { record: '9-8-2', injuries: 'Star forward probable', form: 'L-W-L-W-W' },
+        'Boston Bruins': { record: '10-5-3', injuries: 'No major injuries', form: 'W-L-W-W-W' },
+        'Toronto Maple Leafs': { record: '9-7-2', injuries: 'Starting center questionable', form: 'L-W-L-W-W' },
+        
+        // NFL Teams
+        'Kansas City Chiefs': { record: '9-2', injuries: 'QB Patrick Mahomes probable', form: 'W-W-L-W-W' },
+        'Philadelphia Eagles': { record: '8-3', injuries: 'No major injuries', form: 'W-L-W-W-L' },
+        'Dallas Cowboys': { record: '7-4', injuries: 'QB Dak Prescott questionable', form: 'L-W-W-L-W' },
+        'Las Vegas Raiders': { record: '5-6', injuries: 'Starting RB out', form: 'L-W-L-L-W' },
+        'Green Bay Packers': { record: '8-3', injuries: 'WR corps healthy', form: 'W-W-L-W-W' },
+        'Chicago Bears': { record: '4-7', injuries: 'QB situation unclear', form: 'L-L-W-L-L' },
+        
+        // NBA Teams
+        'Boston Celtics': { record: '12-4', injuries: 'No major injuries', form: 'W-W-L-W-W' },
+        'Los Angeles Lakers': { record: '9-7', injuries: 'LeBron James probable', form: 'W-L-W-L-L' },
+        'Golden State Warriors': { record: '8-8', injuries: 'Stephen Curry questionable', form: 'L-W-W-L-W' },
+        'Phoenix Suns': { record: '10-6', injuries: 'Kevin Durant out', form: 'W-L-W-W-L' },
+        'Milwaukee Bucks': { record: '11-5', injuries: 'Giannis Antetokounmpo probable', form: 'W-W-L-W-W' },
+        'Miami Heat': { record: '9-7', injuries: 'Jimmy Butler questionable', form: 'W-L-W-L-W' },
+        
+        // MLB Teams
+        'Los Angeles Dodgers': { record: '98-56', injuries: 'No major injuries', form: 'W-W-L-W-W' },
+        'San Francisco Giants': { record: '85-69', injuries: 'Starting pitcher out', form: 'L-W-W-L-W' },
+        'New York Yankees': { record: '92-62', injuries: 'Aaron Judge probable', form: 'W-L-W-W-L' },
+        'Boston Red Sox': { record: '78-76', injuries: 'Bullpen concerns', form: 'W-L-L-W-L' },
+        'Houston Astros': { record: '89-65', injuries: 'Jose Altuve questionable', form: 'W-W-L-W-L' },
+        'Atlanta Braves': { record: '95-59', injuries: 'Ronald Acuña Jr. out', form: 'L-W-W-W-W' },
+        
+        // Soccer Teams
+        'Manchester City': { record: '11-2-3', injuries: 'Kevin De Bruyne out', form: 'W-W-L-W-W' },
+        'Burnley': { record: '3-8-5', injuries: 'Defensive issues', form: 'L-L-W-L-L' },
+        'Arsenal': { record: '10-3-3', injuries: 'No major injuries', form: 'W-L-W-W-W' },
+        'Chelsea': { record: '8-5-3', injuries: 'Reece James questionable', form: 'L-W-W-L-W' },
+        'Liverpool': { record: '9-4-3', injuries: 'Mohamed Salah probable', form: 'W-L-W-L-W' },
+        'Manchester United': { record: '7-6-3', injuries: 'Marcus Rashford probable', form: 'L-W-L-W-W' },
+        
+        // Tennis Players
+        'Novak Djokovic': { record: '45-8', injuries: 'No injuries', form: 'W-W-W-L-W' },
+        'Carlos Alcaraz': { record: '52-12', injuries: 'Minor wrist issue', form: 'W-L-W-W-W' },
+        'Rafael Nadal': { record: '38-10', injuries: 'Back issue', form: 'W-L-L-W-W' },
+        'Daniil Medvedev': { record: '48-15', injuries: 'No injuries', form: 'L-W-W-W-L' },
+        'Iga Swiatek': { record: '42-12', injuries: 'No injuries', form: 'W-W-L-W-W' },
+        'Aryna Sabalenka': { record: '38-15', injuries: 'Minor shoulder issue', form: 'W-L-W-L-W' },
+        
+        // NCAA Basketball
+        'Duke Blue Devils': { record: '15-3', injuries: 'Freshman star probable', form: 'W-W-L-W-W' },
+        'North Carolina Tar Heels': { record: '14-4', injuries: 'Senior leader questionable', form: 'W-L-W-L-W' },
+        'Kansas Jayhawks': { record: '16-2', injuries: 'No major injuries', form: 'W-W-W-L-W' },
+        'Kentucky Wildcats': { record: '13-5', injuries: 'Key freshman out', form: 'L-W-L-W-W' },
+        
+        // NCAA Baseball
+        'Vanderbilt Commodores': { record: '28-12', injuries: 'Ace pitcher probable', form: 'W-W-L-W-L' },
+        'Tennessee Volunteers': { record: '31-9', injuries: 'Cleanup hitter questionable', form: 'W-L-W-W-W' },
+        
+        // MMA/UFC
+        'Jon Jones': { record: '27-1-0', injuries: 'No injuries', form: 'W-W-W-W-W' },
+        'Stipe Miocic': { record: '20-4-0', injuries: 'Minor hand issue', form: 'W-L-W-W-L' },
+        
+        // Boxing
+        'Tyson Fury': { record: '34-0-1', injuries: 'No injuries', form: 'W-W-W-D-W' },
+        'Oleksandr Usyk': { record: '21-0-0', injuries: 'No injuries', form: 'W-W-W-W-W' },
+        
+        // Golf
+        'Scottie Scheffler': { record: 'Multiple wins', injuries: 'No injuries', form: 'Strong recent form' },
+        'Rory McIlroy': { record: 'Recent form strong', injuries: 'No injuries', form: 'Consistent performance' },
+        
+        // La Liga
+        'Real Madrid': { record: '12-1-2', injuries: 'No major injuries', form: 'W-W-D-W-W' },
+        'Barcelona': { record: '10-3-2', injuries: 'Several players doubtful', form: 'W-L-W-D-W' },
+        'Atletico Madrid': { record: '9-4-2', injuries: 'Key midfielder out', form: 'L-W-D-W-L' },
+        'Sevilla': { record: '6-5-4', injuries: 'Defensive issues', form: 'D-L-W-L-W' },
+        
+        // MLS
+        'LA Galaxy': { record: '8-8-4', injuries: 'Star striker questionable', form: 'D-L-W-W-L' },
+        'LAFC': { record: '11-5-4', injuries: 'No major injuries', form: 'W-W-D-L-W' },
+        'Inter Miami': { record: '9-7-3', injuries: 'Lionel Messi probable', form: 'W-L-D-W-W' },
+        'New York Red Bulls': { record: '7-9-2', injuries: 'Defensive concerns', form: 'L-W-L-D-L' }
+      };
+      
+      return teamDatabase[teamName] || { record: 'N/A', injuries: 'No data available', form: 'N/A' };
+    }
+
+    // Legacy mock data for fallback
+    const mockSportsData = {
+      'NFL': {
+        teams: [
+          { name: 'Kansas City Chiefs', record: '9-2', injuries: 'QB Patrick Mahomes probable', nextGame: 'vs Raiders' },
+          { name: 'Philadelphia Eagles', record: '8-3', injuries: 'No major injuries', nextGame: 'vs Cowboys' },
+          { name: 'Dallas Cowboys', record: '7-4', injuries: 'QB Dak Prescott questionable', nextGame: '@ Eagles' },
+          { name: 'San Francisco 49ers', record: '8-3', injuries: 'RB Christian McCaffrey out', nextGame: 'vs Seahawks' },
+          { name: 'Buffalo Bills', record: '6-5', injuries: 'WR Stefon Diggs probable', nextGame: '@ Broncos' },
+          { name: 'Miami Dolphins', record: '7-4', injuries: 'QB Tua Tagovailoa questionable', nextGame: 'vs Patriots' }
+        ],
+        weather: 'Clear, 45°F (indoor stadium)'
+      },
+      'NBA': {
+        teams: [
+          { name: 'Boston Celtics', record: '12-4', injuries: 'No major injuries', nextGame: 'vs Lakers' },
+          { name: 'Los Angeles Lakers', record: '9-7', injuries: 'LeBron James probable', nextGame: '@ Celtics' },
+          { name: 'Golden State Warriors', record: '8-8', injuries: 'Stephen Curry questionable', nextGame: 'vs Suns' },
+          { name: 'Phoenix Suns', record: '10-6', injuries: 'Kevin Durant out', nextGame: '@ Warriors' },
+          { name: 'Milwaukee Bucks', record: '11-5', injuries: 'Giannis Antetokounmpo probable', nextGame: 'vs Heat' },
+          { name: 'Miami Heat', record: '9-7', injuries: 'Jimmy Butler questionable', nextGame: '@ Bucks' }
+        ],
+        weather: 'Indoor game'
+      },
+      'MLB': {
+        teams: [
+          { name: 'Los Angeles Dodgers', record: '98-56', injuries: 'No major injuries', nextGame: 'vs Giants' },
+          { name: 'New York Yankees', record: '92-62', injuries: 'Aaron Judge probable', nextGame: '@ Red Sox' },
+          { name: 'Houston Astros', record: '89-65', injuries: 'Jose Altuve questionable', nextGame: 'vs Rangers' },
+          { name: 'Atlanta Braves', record: '95-59', injuries: 'Ronald Acuña Jr. out', nextGame: '@ Mets' },
+          { name: 'Texas Rangers', record: '87-67', injuries: 'Corey Seager probable', nextGame: '@ Astros' },
+          { name: 'Philadelphia Phillies', record: '89-65', injuries: 'Bryce Harper questionable', nextGame: 'vs Mets' }
+        ],
+        weather: 'Partly cloudy, 72°F'
+      },
+      'NHL': {
+        teams: [
+          { name: 'New York Rangers', record: '12-6-2', injuries: 'No major injuries', nextGame: '@ Utah Mammoth' },
+          { name: 'Utah Mammoth', record: '8-10-1', injuries: 'Starting goalie questionable', nextGame: 'vs Rangers' },
+          { name: 'Tampa Bay Lightning', record: '11-7-1', injuries: 'Top defenseman out', nextGame: '@ Capitals' },
+          { name: 'Washington Capitals', record: '9-8-2', injuries: 'Star forward probable', nextGame: 'vs Lightning' },
+          { name: 'Boston Bruins', record: '10-5-3', injuries: 'No major injuries', nextGame: 'vs Maple Leafs' },
+          { name: 'Toronto Maple Leafs', record: '9-7-2', injuries: 'Starting center questionable', nextGame: '@ Bruins' }
+        ],
+        weather: 'Indoor game, 68°F'
+      },
+      'ICE_HOCKEY': {
+        teams: [
+          { name: 'New York Rangers', record: '12-6-2', injuries: 'No major injuries', nextGame: '@ Utah Mammoth' },
+          { name: 'Utah Mammoth', record: '8-10-1', injuries: 'Starting goalie questionable', nextGame: 'vs Rangers' },
+          { name: 'Tampa Bay Lightning', record: '11-7-1', injuries: 'Top defenseman out', nextGame: '@ Capitals' },
+          { name: 'Washington Capitals', record: '9-8-2', injuries: 'Star forward probable', nextGame: 'vs Lightning' },
+          { name: 'Boston Bruins', record: '10-5-3', injuries: 'No major injuries', nextGame: 'vs Maple Leafs' },
+          { name: 'Toronto Maple Leafs', record: '9-7-2', injuries: 'Starting center questionable', nextGame: '@ Bruins' }
+        ],
+        weather: 'Indoor game, 68°F'
+      },
+      'Premier League': {
+        teams: [
+          { name: 'Manchester City', record: '11-2-3', injuries: 'Kevin De Bruyne out', nextGame: 'vs Burnley' },
+          { name: 'Arsenal', record: '10-3-3', injuries: 'No major injuries', nextGame: '@ Chelsea' },
+          { name: 'Liverpool', record: '9-4-3', injuries: 'Mohamed Salah probable', nextGame: 'vs Everton' },
+          { name: 'Chelsea', record: '8-5-3', injuries: 'Reece James questionable', nextGame: 'vs Arsenal' },
+          { name: 'Manchester United', record: '7-6-3', injuries: 'Marcus Rashford probable', nextGame: '@ Tottenham' },
+          { name: 'Tottenham', record: '9-3-4', injuries: 'Harry Kane out', nextGame: 'vs Man United' }
+        ],
+        weather: 'Rainy, 45°F'
+      },
+      'La Liga': {
+        teams: [
+          { name: 'Real Madrid', record: '12-1-2', injuries: 'No major injuries', nextGame: 'vs Barcelona' },
+          { name: 'Barcelona', record: '10-3-2', injuries: 'Several players doubtful', nextGame: '@ Real Madrid' },
+          { name: 'Atletico Madrid', record: '9-4-2', injuries: 'Key midfielder out', nextGame: 'vs Sevilla' },
+          { name: 'Sevilla', record: '6-5-4', injuries: 'Defensive issues', nextGame: '@ Atletico' }
+        ],
+        weather: 'Mild, 65°F'
+      },
+      'MLS': {
+        teams: [
+          { name: 'LA Galaxy', record: '8-8-4', injuries: 'Star striker questionable', nextGame: 'vs LAFC' },
+          { name: 'LAFC', record: '11-5-4', injuries: 'No major injuries', nextGame: '@ Galaxy' },
+          { name: 'Inter Miami', record: '9-7-3', injuries: 'Lionel Messi probable', nextGame: 'vs Red Bulls' },
+          { name: 'New York Red Bulls', record: '7-9-2', injuries: 'Defensive concerns', nextGame: '@ Inter Miami' }
+        ],
+        weather: 'Warm, 75°F'
+      },
+      'Champions League': {
+        teams: [
+          { name: 'Bayern Munich', record: '4-1-1', injuries: 'Key defender out', nextGame: 'vs PSG' },
+          { name: 'PSG', record: '3-2-1', injuries: 'Mbappe probable', nextGame: '@ Bayern' }
+        ],
+        weather: 'Varies by location'
+      },
+      'ATP': {
+        teams: [
+          { name: 'Novak Djokovic', record: '45-8', injuries: 'No injuries', nextGame: 'vs Alcaraz' },
+          { name: 'Carlos Alcaraz', record: '52-12', injuries: 'Minor wrist issue', nextGame: 'vs Djokovic' },
+          { name: 'Rafael Nadal', record: '38-10', injuries: 'Back issue', nextGame: 'vs Medvedev' },
+          { name: 'Daniil Medvedev', record: '48-15', injuries: 'No injuries', nextGame: 'vs Nadal' }
+        ],
+        weather: 'Outdoor conditions'
+      },
+      'WTA': {
+        teams: [
+          { name: 'Iga Swiatek', record: '42-12', injuries: 'No injuries', nextGame: 'vs Sabalenka' },
+          { name: 'Aryna Sabalenka', record: '38-15', injuries: 'Minor shoulder issue', nextGame: 'vs Swiatek' }
+        ],
+        weather: 'Outdoor conditions'
+      },
+      'Grand Slam': {
+        teams: [
+          { name: 'Novak Djokovic', record: '45-8', injuries: 'No injuries', nextGame: 'vs Alcaraz' },
+          { name: 'Carlos Alcaraz', record: '52-12', injuries: 'Minor wrist issue', nextGame: 'vs Djokovic' }
+        ],
+        weather: 'Varies by tournament'
+      },
+      'NCAA Basketball': {
+        teams: [
+          { name: 'Duke Blue Devils', record: '15-3', injuries: 'Freshman star probable', nextGame: 'vs UNC' },
+          { name: 'North Carolina Tar Heels', record: '14-4', injuries: 'Senior leader questionable', nextGame: '@ Duke' },
+          { name: 'Kansas Jayhawks', record: '16-2', injuries: 'No major injuries', nextGame: 'vs Kentucky' },
+          { name: 'Kentucky Wildcats', record: '13-5', injuries: 'Key freshman out', nextGame: '@ Kansas' }
+        ],
+        weather: 'Indoor game'
+      },
+      'NCAA Baseball': {
+        teams: [
+          { name: 'Vanderbilt Commodores', record: '28-12', injuries: 'Ace pitcher probable', nextGame: 'vs Tennessee' },
+          { name: 'Tennessee Volunteers', record: '31-9', injuries: 'Cleanup hitter questionable', nextGame: '@ Vanderbilt' }
+        ],
+        weather: 'Partly cloudy, 72°F'
+      },
+      'MMA/UFC': {
+        teams: [
+          { name: 'Jon Jones', record: '27-1-0', injuries: 'No injuries', nextGame: 'vs Miocic' },
+          { name: 'Stipe Miocic', record: '20-4-0', injuries: 'Minor hand issue', nextGame: 'vs Jones' }
+        ],
+        weather: 'Indoor arena'
+      },
+      'Boxing': {
+        teams: [
+          { name: 'Tyson Fury', record: '34-0-1', injuries: 'No injuries', nextGame: 'vs Usyk' },
+          { name: 'Oleksandr Usyk', record: '21-0-0', injuries: 'No injuries', nextGame: 'vs Fury' }
+        ],
+        weather: 'Indoor arena'
+      },
+      'Golf': {
+        teams: [
+          { name: 'Scottie Scheffler', record: 'Multiple wins', injuries: 'No injuries', nextGame: 'vs McIlroy' },
+          { name: 'Rory McIlroy', record: 'Recent form strong', injuries: 'No injuries', nextGame: 'vs Scheffler' }
+        ],
+        weather: 'Outdoor conditions'
+      }
+    };
+
+    function getAutoGameData(sport, favoriteTeam, underdogTeam) {
+      const sportData = mockSportsData[sport];
+      if (!sportData) return null;
+      
+      const favTeam = sportData.teams.find(t => t.name.toLowerCase().includes(favoriteTeam.toLowerCase()));
+      const dogTeam = sportData.teams.find(t => t.name.toLowerCase().includes(underdogTeam.toLowerCase()));
+      
+      return {
+        favorite: favTeam,
+        underdog: dogTeam,
+        weather: sportData.weather
+      };
+    }
+
+    async function populateCurrentGames(sport) {
+      const games = await getCurrentGames(sport);
+      currentGameEl.innerHTML = '<option value="">Select a current game...</option>';
+      
+      // Create a Set to track unique games and avoid duplicates
+      const uniqueGames = new Set();
+      
+      games.forEach(game => {
+        // Create a unique key for each game to avoid duplicates
+        const gameKey = `${game.away_team} vs ${game.home_team}`.toLowerCase();
+        
+        // Only add if this game hasn't been added before
+        if (!uniqueGames.has(gameKey)) {
+          uniqueGames.add(gameKey);
+          
+          const option = document.createElement('option');
+          option.value = JSON.stringify({
+            home: game.home_team,
+            away: game.away_team,
+            spread: game.spread,
+            total: game.total,
+            moneyline: game.moneyline,
+            time: game.time
+          });
+          option.textContent = `${game.away_team} @ ${game.home_team} - ${game.time}`;
+          currentGameEl.appendChild(option);
+        }
+      });
+    }
+
+    function handleGameSelection() {
+      const selectedGame = currentGameEl.value;
+      if (!selectedGame) return;
+      
+      try {
+        const gameData = JSON.parse(selectedGame);
+        
+        // Auto-populate teams
+        favoriteTeamEl.value = gameData.home;
+        underdogTeamEl.value = gameData.away;
+        
+        // Auto-populate odds based on bet type
+        updateOddsBasedOnBetType(gameData);
+        
+        // Trigger auto-fill for other game data
+        autoFillGameData();
+      } catch (error) {
+        console.error('Error parsing game data:', error);
+      }
+    }
+
+    function updateOddsBasedOnBetType(gameData) {
+      const betType = betTypeEl.value;
+      let odds = '';
+      
+      switch (betType) {
+        case 'Moneyline':
+          odds = gameData.moneyline;
+          break;
+        case 'Spread':
+          odds = gameData.spread;
+          break;
+        case 'Over/Under':
+          odds = `Total: ${gameData.total}`;
+          break;
+        case 'Parlay':
+          odds = 'Multiple selections required';
+          break;
+        default:
+          odds = gameData.moneyline;
+      }
+      
+      oddsEl.value = odds;
+    }
+
+    function populateTeamDropdowns(sport) {
+      const sportData = mockSportsData[sport];
+      if (!sportData) return;
+      
+      const favSelect = document.getElementById('favoriteTeam');
+      const dogSelect = document.getElementById('underdogTeam');
+      
+      // Clear existing options except the first one
+      favSelect.innerHTML = '<option value="">Select team...</option>';
+      dogSelect.innerHTML = '<option value="">Select team...</option>';
+      
+      // Add teams to both dropdowns
+      sportData.teams.forEach(team => {
+        const option1 = document.createElement('option');
+        option1.value = team.name;
+        option1.textContent = team.name;
+        favSelect.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = team.name;
+        option2.textContent = team.name;
+        dogSelect.appendChild(option2);
+      });
+    }
+
+    function autoFillGameData() {
+      const sport = sportEl.value;
+      const favoriteTeam = favoriteTeamEl.value;
+      const underdogTeam = underdogTeamEl.value;
+      
+      if (sport && favoriteTeam && underdogTeam) {
+        const gameData = getAutoGameData(sport, favoriteTeam, underdogTeam);
+        
+        if (gameData && gameData.favorite && gameData.underdog) {
+          // Auto-fill team records
+          favoriteRecordEl.value = gameData.favorite.record;
+          underdogRecordEl.value = gameData.underdog.record;
+          
+          // Auto-fill injuries
+          const favInjuries = gameData.favorite.injuries;
+          const dogInjuries = gameData.underdog.injuries;
+          if (favInjuries !== 'No major injuries' || dogInjuries !== 'No major injuries') {
+            injuriesEl.value = `${favInjuries} | ${dogInjuries}`;
+          } else {
+            injuriesEl.value = 'No major injuries for either team';
+          }
+          
+          // Auto-fill weather
+          weatherEl.value = gameData.weather;
+        }
+      } else {
+        // Clear auto-filled fields if teams aren't selected
+        favoriteRecordEl.value = '';
+        underdogRecordEl.value = '';
+        injuriesEl.value = '';
+        weatherEl.value = '';
+      }
+    }
+
+    function detectSignals(payload) {
+      const amt = Number(payload.betAmount) || 0;
+      const budget = Number(payload.budget) || 0;
+      const percent = budget > 0 ? Math.round((amt / budget) * 100) : 0;
+      const h = normalize(payload.history);
+      const n = normalize(payload.notes);
+      const isParlay = payload.betType === 'Parlay';
+
+      const hasLoss = /\blost\b|\bloss\b|\bdown\b/.test(h);
+      const chasing = /(win it back|win back|recoup|recover|chasing|make back)/.test(h + ' ' + n) && hasLoss;
+      const frequency = /(\d+)\s*bets|multiple bets|every day|daily|bet every/.test(h);
+      const emotional = /(need to win|desperate|can'?t lose|must win|sure thing|lock|guarantee)/.test(h + ' ' + n);
+      const parlayAfterLoss = isParlay && hasLoss;
+      const sizeFlag = percent > 15;
+
+      const signals = [];
+      if (sizeFlag) signals.push({ label: 'Bet size exceeds 15% of budget', type: 'size' });
+      if (chasing) signals.push({ label: 'Chasing losses language detected', type: 'chasing' });
+      if (frequency) signals.push({ label: 'High betting frequency indicated', type: 'frequency' });
+      if (emotional) signals.push({ label: 'Emotional/overconfident language detected', type: 'emotional' });
+      if (parlayAfterLoss) signals.push({ label: 'Parlay after losses increases risk', type: 'parlay_loss' });
+
+      let risk = 'LOW';
+      if (percent >= 20 || signals.length >= 2) risk = 'HIGH';
+      else if ((percent >= 10 && percent < 20) || signals.length === 1) risk = 'MODERATE';
+
+      if (chasing && isParlay) risk = 'HIGH';
+
+      let color = 'risk-low';
+      if (risk === 'MODERATE') color = 'risk-moderate';
+      if (risk === 'HIGH') color = 'risk-high';
+
+      const recommendations = [];
+      if (percent > 20) recommendations.push('Reduce bet size below 10% of weekly budget');
+      else if (percent >= 10) recommendations.push('Consider lowering bet size to under 10% of budget');
+      if (chasing) recommendations.push('Avoid chasing losses; consider a cooling-off period');
+      if (frequency) recommendations.push('Set limits to reduce short-term betting frequency');
+      if (emotional) recommendations.push('Reflect on reasoning; avoid emotion-driven decisions');
+      if (parlayAfterLoss) recommendations.push('Skip parlays after losses; choose a single event');
+      if (recommendations.length === 0) recommendations.push('Stay within budget and track outcomes objectively');
+
+      return { percent, signals, risk, color, recommendations };
+    }
+
+    function analyticalAgent(payload) {
+      const amt = Number(payload.betAmount) || 0;
+      const budget = Number(payload.budget) || 0;
+      const percent = budget > 0 ? Math.round((amt / budget) * 100) : 0;
+      const isParlay = payload.betType === 'Parlay';
+      const type = payload.betType;
+      const sport = payload.sport;
+
+      const insights = [];
+      insights.push(`Bet type: ${type} • Sport: ${sport}`);
+      insights.push(`Stake: $${amt} • ${percent}% of weekly budget`);
+      if (isParlay) insights.push('Parlay: payout potential rises but probability drops sharply');
+      if (type === 'Spread' || type === 'Over/Under') insights.push('Lines typically priced near even odds; vig affects EV');
+      if (type === 'Moneyline') insights.push('Assess fair odds vs offered price; avoid heavy juice');
+
+      const evNotes = [];
+      if (isParlay) evNotes.push('Compounded legs reduce win probability; EV often negative without edge');
+      evNotes.push('EV hinges on fair probability vs payout; track implied odds and vig');
+      evNotes.push('Consider bankroll impact; higher stake % increases risk of ruin');
+
+      const factors = [];
+      factors.push('Team injuries and rest');
+      factors.push('Recent form and matchup stats');
+      factors.push('Home/away splits and travel');
+      factors.push('Line movement and market consensus');
+      factors.push('Weather (for outdoor sports)');
+
+      return { insights, evNotes, factors };
+    }
+
+    function harmAgent(payload) { return detectSignals(payload); }
+
+    function parseBettingSlip(bettingSlipText) {
+      if (!bettingSlipText) return null;
+      
+      const text = bettingSlipText.toLowerCase();
+      const parsed = {
+        hasParlay: false,
+        hasMultipleBets: false,
+        totalStake: 0,
+        betCount: 0,
+        teams: [],
+        betTypes: [],
+        riskIndicators: []
+      };
+      
+      // Detect bet type
+      if (/(parlay|accumulator|multi|multiple)/i.test(text)) {
+        parsed.hasParlay = true;
+        parsed.riskIndicators.push('Parlay bet detected');
+      }
+      
+      // Detect multiple bets
+      const betMatches = text.match(/(\d+)\s*leg|\d+\s*team|\d+\s*game|\d+\s*selection/gi);
+      if (betMatches) {
+        parsed.hasMultipleBets = true;
+        parsed.betCount = Math.max(...betMatches.map(m => parseInt(m.match(/\d+/)[0])));
+        if (parsed.betCount > 3) parsed.riskIndicators.push(`Complex bet with ${parsed.betCount} selections`);
+      }
+      
+      // Extract stake amount
+      const stakeMatch = text.match(/\$(\d+(?:\.\d{2})?)|(\d+(?:\.\d{2})?)\s*\$/i);
+      if (stakeMatch) {
+        parsed.totalStake = parseFloat(stakeMatch[1] || stakeMatch[2]);
+        if (parsed.totalStake > 100) parsed.riskIndicators.push('High stake amount');
+      }
+      
+      // Extract teams/lines
+      const teamPatterns = [
+        /([a-z]{3,}\s+[a-z]{3,}|[a-z]+)\s*[+-]\d+(\.\d+)?/gi, // Team names with spread
+        /([a-z]{3,}\s+[a-z]{3,}|[a-z]+)\s+moneyline/gi, // Moneyline
+        /over\s+\d+(\.\d+)?|under\s+\d+(\.\d+)?/gi // Totals
+      ];
+      
+      teamPatterns.forEach(pattern => {
+        const matches = text.match(pattern);
+        if (matches) parsed.teams = [...parsed.teams, ...matches];
+      });
+      
+      // Detect emotional language in betting slip
+      if (/(big|huge|massive|all in|yolo|lock|guarantee|sure thing)/i.test(text)) {
+        parsed.riskIndicators.push('Emotional/overconfident language');
+      }
+      
+      // Detect chasing patterns
+      if (/(win back|recover|make back|get even|chase)/i.test(text)) {
+        parsed.riskIndicators.push('Potential chasing behavior');
+      }
+      
+      return parsed;
+    }
+
+    function emotionalPsychologyAnalysis(payload) {
+      const currentEmotion = payload.currentEmotion || 'Neutral/Calm';
+      const lastOutcome = payload.lastOutcome || 'Haven\'t bet recently';
+      const emotionalTriggers = (payload.emotionalTriggers || '').toLowerCase();
+      const bettingSlip = (payload.bettingSlip || '').toLowerCase();
+      
+      // Parse betting slip for emotional patterns
+      const slipAnalysis = parseBettingSlip(bettingSlip);
+      
+      // Emotional state mapping
+      const positiveEmotions = ['happy', 'excited', 'confident', 'optimistic', 'gleeful'];
+      const negativeEmotions = ['frustrated', 'annoyed', 'sad', 'disappointed', 'anxious', 'stressed', 'angry', 'upset'];
+      const dangerousEmotions = ['desperate', 'greedy', 'lucky'];
+      
+      // Analyze current emotional state
+      let emotionalRisk = 'LOW';
+      let emotionalState = 'neutral';
+      let emotionalFactors = [];
+      
+      // Check current emotion
+      const emotionText = currentEmotion.toLowerCase();
+      if (dangerousEmotions.some(e => emotionText.includes(e))) {
+        emotionalRisk = 'HIGH';
+        emotionalState = 'dangerous';
+        emotionalFactors.push('Dangerous emotional state detected');
+      } else if (negativeEmotions.some(e => emotionText.includes(e))) {
+        emotionalRisk = 'HIGH';
+        emotionalState = 'negative';
+        emotionalFactors.push('Negative emotional state');
+      } else if (positiveEmotions.some(e => emotionText.includes(e))) {
+        emotionalRisk = 'MODERATE';
+        emotionalState = 'positive';
+        emotionalFactors.push('Positive but potentially overconfident state');
+      }
+      
+      // Check last outcome impact
+      if (lastOutcome.includes('Lost')) {
+        emotionalFactors.push('Recent loss may trigger chasing behavior');
+        if (emotionalRisk === 'LOW') emotionalRisk = 'MODERATE';
+      } else if (lastOutcome.includes('Won')) {
+        emotionalFactors.push('Recent win may create overconfidence');
+      }
+      
+      // Analyze emotional triggers
+      const triggerSignals = {
+        chasing: /win back|recover|make back|get even|chase/i,
+        desperation: /need to|must win|desperate|can\'t lose/i,
+        overconfidence: /feeling lucky|on fire|hot streak|can\'t lose|sure thing/i,
+        celebration: /celebrate|treat myself|reward/i,
+        boredom: /bored|nothing to do|pass time/i,
+        anger: /pissed|angry|mad|show them|prove/i,
+        fear: /scared|nervous|worried|anxious/i
+      };
+      
+      Object.entries(triggerSignals).forEach(([type, regex]) => {
+        if (regex.test(emotionalTriggers)) {
+          emotionalFactors.push(`Emotional trigger detected: ${type}`);
+          if (type === 'chasing' || type === 'desperation' || type === 'anger') {
+            emotionalRisk = 'HIGH';
+          } else if (emotionalRisk === 'LOW' && (type === 'overconfidence' || type === 'celebration')) {
+            emotionalRisk = 'MODERATE';
+          }
+        }
+      });
+      
+      // Analyze betting slip for emotional patterns
+      if (slipAnalysis) {
+        if (slipAnalysis.hasParlay && emotionalTriggers.includes('chasing')) {
+          emotionalFactors.push('Complex parlay bets while emotionally compromised');
+          emotionalRisk = 'HIGH';
+        }
+        if (slipAnalysis.totalStake > 100 && emotionalRisk !== 'LOW') {
+          emotionalFactors.push(`Large stake amount ($${slipAnalysis.totalStake}) during emotional state`);
+          emotionalRisk = 'HIGH';
+        }
+        if (slipAnalysis.riskIndicators.length > 0) {
+          emotionalFactors.push(...slipAnalysis.riskIndicators.map(r => `Bet slip: ${r}`));
+        }
+        if (slipAnalysis.betCount > 3) {
+          emotionalFactors.push(`Complex multi-bet (${slipAnalysis.betCount} selections) - higher risk`);
+          if (emotionalRisk === 'LOW') emotionalRisk = 'MODERATE';
+        }
+      }
+      
+      // Recovery recommendations
+      const recoveryRecommendations = [];
+      if (emotionalRisk === 'HIGH') {
+        recoveryRecommendations.push('Strongly recommend waiting 24-48 hours before betting');
+        recoveryRecommendations.push('Consider taking a break from betting today');
+        recoveryRecommendations.push('Practice emotional regulation techniques');
+      } else if (emotionalRisk === 'MODERATE') {
+        recoveryRecommendations.push('Wait a few hours and reassess your emotional state');
+        recoveryRecommendations.push('Consider reducing bet size significantly');
+        recoveryRecommendations.push('Focus on objective analysis rather than emotions');
+      } else {
+        recoveryRecommendations.push('Maintain emotional awareness while betting');
+        recoveryRecommendations.push('Stick to your predetermined betting strategy');
+      }
+      
+      return {
+        emotionalRisk,
+        emotionalState,
+        emotionalFactors,
+        recoveryRecommendations,
+        shouldWait: emotionalRisk === 'HIGH',
+        waitingPeriod: emotionalRisk === 'HIGH' ? '24-48 hours' : emotionalRisk === 'MODERATE' ? '2-4 hours' : 'immediate'
+      };
+    }
+
+    function unifiedRecommendationAgent(payload, analyticalData, safetyData) {
+      const amt = Number(payload.betAmount) || 0;
+      const budget = Number(payload.budget) || 0;
+      const percent = budget > 0 ? Math.round((amt / budget) * 100) : 0;
+      const isParlay = payload.betType === 'Parlay';
+      
+      // Parse team records
+      const favRecord = payload.favoriteRecord || '';
+      const dogRecord = payload.underdogRecord || '';
+      const favWins = parseInt(favRecord.split('-')[0]) || 0;
+      const favLosses = parseInt(favRecord.split('-')[1]) || 0;
+      const dogWins = parseInt(dogRecord.split('-')[0]) || 0;
+      const dogLosses = parseInt(dogRecord.split('-')[1]) || 0;
+      
+      const favWinPct = favWins + favLosses > 0 ? (favWins / (favWins + favLosses)) : 0.5;
+      const dogWinPct = dogWins + dogLosses > 0 ? (dogWins / (dogWins + dogLosses)) : 0.5;
+      
+      // Game analysis factors
+      const hasKeyInjuries = /star|key|starting|main/i.test(payload.injuries || '');
+      const badWeather = /rain|snow|wind|cold/i.test(payload.weather || '');
+      const bigFavorite = favWinPct - dogWinPct > 0.3;
+      const recordsClose = Math.abs(favWinPct - dogWinPct) < 0.15;
+      
+      // Emotional psychology analysis
+      const emotionalAnalysis = emotionalPsychologyAnalysis(payload);
+      
+      // Financial risk factors
+      const highBudgetRisk = percent > 20;
+      const moderateBudgetRisk = percent > 10 && percent <= 20;
+      const chasingBehavior = safetyData.signals.some(s => s.type === 'chasing');
+      const emotionalBetting = safetyData.signals.some(s => s.type === 'emotional');
+      
+      // Recommendation logic
+      let recommendation = 'PROCEED WITH CAUTION';
+      let reason = '';
+      let confidence = 50;
+      
+      // PRIORITY 1: Emotional Psychology - Most Important
+      if (emotionalAnalysis.emotionalRisk === 'HIGH') {
+        recommendation = 'DON\'T PLACE BET';
+        reason = `Emotional state (${emotionalAnalysis.emotionalState}) detected. ${emotionalAnalysis.emotionalFactors[0]}. Waiting ${emotionalAnalysis.waitingPeriod} is strongly recommended for better decision making.`;
+        confidence = 90;
+      }
+      // Strong DON'T BET conditions (emotional + financial)
+      else if (highBudgetRisk && (chasingBehavior || emotionalBetting || emotionalAnalysis.emotionalRisk === 'MODERATE')) {
+        recommendation = 'DON\'T PLACE BET';
+        reason = 'High financial risk combined with emotional factors. This bet poses significant danger to your bankroll and mental well-being.';
+        confidence = 85;
+      } else if (isParlay && (chasingBehavior || emotionalAnalysis.emotionalState === 'negative')) {
+        recommendation = 'DON\'T PLACE BET';
+        reason = 'Emotional state combined with parlays is extremely risky. Parlays already have lower win probability and emotional betting clouds judgment.';
+        confidence = 85;
+      } else if (emotionalAnalysis.shouldWait && (highBudgetRisk || isParlay)) {
+        recommendation = 'DON\'T PLACE BET';
+        reason = `Your emotional state suggests waiting ${emotionalAnalysis.waitingPeriod} before betting. Combined with financial risk, this is not advisable right now.`;
+        confidence = 80;
+      }
+      // Strong BET conditions
+      else if (!highBudgetRisk && !moderateBudgetRisk && !chasingBehavior && !emotionalBetting && 
+               bigFavorite && !hasKeyInjuries && !badWeather && !isParlay) {
+        recommendation = 'PLACE BET';
+        reason = 'Low financial risk, no emotional patterns, favorable matchup with strong favorite and no major injuries.';
+        confidence = 75;
+      }
+      // CAUTION conditions
+      else {
+        const riskFactors = [];
+        if (moderateBudgetRisk) riskFactors.push('moderate budget risk');
+        if (chasingBehavior) riskFactors.push('chasing losses');
+        if (emotionalBetting) riskFactors.push('emotional decision making');
+        if (hasKeyInjuries) riskFactors.push('key injuries');
+        if (badWeather) riskFactors.push('poor weather conditions');
+        if (isParlay) riskFactors.push('parlay complexity');
+        if (recordsClose) riskFactors.push('closely matched teams');
+        
+        if (riskFactors.length > 0) {
+          reason = `Consider proceeding carefully due to: ${riskFactors.join(', ')}. ${percent > 15 ? 'Reduce bet size' : 'Monitor your emotional state'} and ensure this fits your overall strategy.`;
+        } else {
+          reason = 'Standard bet with manageable risk. Ensure this aligns with your betting strategy and emotional state.';
+        }
+        confidence = Math.max(30, 70 - (riskFactors.length * 10));
+      }
+      
+      return {
+        recommendation,
+        reason,
+        confidence,
+        riskLevel: safetyData.risk,
+        budgetPercent: percent,
+        emotionalAnalysis,
+        gameFactors: {
+          favoriteWinPct: Math.round(favWinPct * 100),
+          underdogWinPct: Math.round(dogWinPct * 100),
+          hasKeyInjuries,
+          badWeather,
+          isParlay
+        }
+      };
+    }
+
+    function agentFetch(channel, payload) {
+      const data = channel === 'analytical' ? analyticalAgent(payload) : harmAgent(payload);
+      const url = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
+      return fetch(url).then(r => r.json()).finally(() => URL.revokeObjectURL(url));
+    }
+
+    function renderAnalytical(res) {
+      const list = (arr, alt) => arr.map((t, i) => `<div class="list-item"><div class="dot ${alt && i%2===0 ? 'dot-alt' : ''}"></div><div>${t}</div></div>`).join('');
+      analyticalBody.innerHTML = `
+        <div class="list">${list(res.insights, true)}</div>
+        <div style="height:12px"></div>
+        <div class="stat"><div>Expected Value Considerations</div><div class="pill">Qualitative</div></div>
+        <div class="list" style="margin-top:10px">${list(res.evNotes)}</div>
+        <div style="height:12px"></div>
+        <div class="stat"><div>Relevant Stats & Factors</div><div class="pill">Checklist</div></div>
+        <div class="list" style="margin-top:10px">${list(res.factors, true)}</div>
+      `;
+    }
+
+    function renderSafety(res) {
+      safetyCard.classList.remove('risk-low','risk-moderate','risk-high');
+      safetyCard.classList.add(res.color);
+      const riskBadge = `<span class="risk ${res.color}">Risk: ${res.risk}</span>`;
+      const signalsList = res.signals.length ? res.signals.map(s => `<div class="list-item"><div class="dot"></div><div>${s.label}</div></div>`).join('') : '<div class="muted">No red flags detected</div>';
+      const recsList = res.recommendations.map(s => `<div class="list-item"><div class="dot dot-alt"></div><div>${s}</div></div>`).join('');
+      safetyBody.innerHTML = `
+        <div class="stat"><div>Bet size vs budget</div><div class="pill">${res.percent}% of weekly budget</div></div>
+        <div style="height:10px"></div>
+        ${riskBadge}
+        <div style="height:16px"></div>
+        <div class="stat"><div>Detected Patterns</div><div class="pill">Harm Signals</div></div>
+        <div class="list" style="margin-top:10px">${signalsList}</div>
+        <div style="height:12px"></div>
+        <div class="stat"><div>Recommendations</div><div class="pill">Actionable</div></div>
+        <div class="list" style="margin-top:10px">${recsList}</div>
+      `;
+    }
+
+    function renderRecommendation(res) {
+      recommendationCard.classList.remove('recommendation-bet','recommendation-dont-bet','recommendation-caution');
+      
+      let cardClass = 'recommendation-caution';
+      if (res.recommendation === 'PLACE BET') cardClass = 'recommendation-bet';
+      if (res.recommendation === 'DON\'T PLACE BET') cardClass = 'recommendation-dont-bet';
+      
+      recommendationCard.classList.add(cardClass);
+      
+      const emotionalAnalysis = res.emotionalAnalysis;
+      const emotionalColor = emotionalAnalysis.emotionalRisk === 'HIGH' ? '#e74c3c' : 
+                           emotionalAnalysis.emotionalRisk === 'MODERATE' ? '#f1c40f' : '#21d07a';
+      
+      const emotionalAnalysisHTML = `
+        <div class="stat"><div>Emotional Psychology Analysis</div><div class="pill" style="color: ${emotionalColor}; border-color: ${emotionalColor};">${emotionalAnalysis.emotionalRisk} RISK</div></div>
+        <div style="height:12px"></div>
+        <div class="list">
+          ${emotionalAnalysis.emotionalFactors.map(factor => `<div class="list-item"><div class="dot" style="background: ${emotionalColor};"></div><div>${factor}</div></div>`).join('')}
+          ${emotionalAnalysis.shouldWait ? `<div class="list-item"><div class="dot" style="background: #e74c3c;"></div><div>Recommended waiting period: ${emotionalAnalysis.waitingPeriod}</div></div>` : ''}
+        </div>
+        <div style="height:16px"></div>
+        <div class="stat"><div>Emotional Recovery Recommendations</div></div>
+        <div style="height:12px"></div>
+        <div class="list">
+          ${emotionalAnalysis.recoveryRecommendations.map(rec => `<div class="list-item"><div class="dot" style="background: #6aa5ff;"></div><div>${rec}</div></div>`).join('')}
+        </div>
+      `;
+      
+      const gameAnalysis = `
+        <div class="stat"><div>Team Matchup Analysis</div></div>
+        <div style="height:12px"></div>
+        <div class="list">
+          <div class="list-item"><div class="dot"></div><div>Favorite win rate: ${res.gameFactors.favoriteWinPct}%</div></div>
+          <div class="list-item"><div class="dot"></div><div>Underdog win rate: ${res.gameFactors.underdogWinPct}%</div></div>
+          ${res.gameFactors.hasKeyInjuries ? '<div class="list-item"><div class="dot" style="background: #e74c3c;"></div><div>Key injuries detected</div></div>' : ''}
+          ${res.gameFactors.badWeather ? '<div class="list-item"><div class="dot" style="background: #f1c40f;"></div><div>Poor weather conditions</div></div>' : ''}
+          ${res.gameFactors.isParlay ? '<div class="list-item"><div class="dot" style="background: #6aa5ff;"></div><div>Parlay bet (lower probability)</div></div>' : ''}
+        </div>
+      `;
+      
+      recommendationBody.innerHTML = `
+        <div class="recommendation ${cardClass}">
+          <div class="recommendation-title">${res.recommendation}</div>
+          <div class="recommendation-reason">${res.reason}</div>
+          <div class="confidence-score">Confidence: ${res.confidence}%</div>
+        </div>
+        <div style="height:20px"></div>
+        <div class="stat"><div>Financial Analysis</div><div class="pill">${res.budgetPercent}% of budget</div></div>
+        <div style="height:12px"></div>
+        <div class="stat"><div>Risk Level: ${res.riskLevel}</div></div>
+        <div style="height:20px"></div>
+        ${emotionalAnalysisHTML}
+        <div style="height:20px"></div>
+        ${gameAnalysis}
+      `;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        sport: sportEl.value,
+        currentGame: currentGameEl.value,
+        betType: betTypeEl.value,
+        odds: oddsEl.value,
+        betAmount: Number(betAmountEl.value),
+        budget: Number(budgetEl.value),
+        favoriteTeam: favoriteTeamEl.value,
+        underdogTeam: underdogTeamEl.value,
+        favoriteRecord: favoriteRecordEl.value,
+        underdogRecord: underdogRecordEl.value,
+        injuries: injuriesEl.value,
+        weather: weatherEl.value,
+        currentEmotion: currentEmotionEl.value,
+        lastOutcome: lastOutcomeEl.value,
+        emotionalTriggers: emotionalTriggersEl.value,
+        bettingSlip: bettingSlipEl.value,
+        history: historyEl.value,
+        notes: notesEl.value
+      };
+      const [analytical, safety] = await Promise.all([
+        agentFetch('analytical', payload),
+        agentFetch('harm', payload)
+      ]);
+      const recommendation = unifiedRecommendationAgent(payload, analytical, safety);
+      renderAnalytical(analytical);
+      renderSafety(safety);
+      renderRecommendation(recommendation);
+    });
+
+    // Initialize team dropdowns on page load
+    populateTeamDropdowns('ICE_HOCKEY');
+    populateCurrentGames('ICE_HOCKEY');
+  </script>
+</body>
+</html>

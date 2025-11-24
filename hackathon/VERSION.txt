@@ -1,0 +1,13 @@
+Version: 1.1.0
+Date: 2024-11-22
+
+Changes:
+- Enhanced sports organization with league/association grouping
+- Implemented duplicate game prevention using Set-based filtering
+- Added comprehensive emotional psychology analysis with betting slip parsing
+- Integrated real sports API with comprehensive fallback system
+- Expanded sports coverage to 9+ categories with proper league organization
+- Maintained original professional dark UI theme
+- Added dual-agent AI analysis system (Analytical + Safety agents)
+- Improved risk assessment with emotional state detection
+- Added recovery recommendations for problematic betting patterns

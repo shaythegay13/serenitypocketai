@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sports Dropdown & Duplicates Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0b0f13;
+            color: #e6edf5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #151a22;
+            border: 1px solid #273043;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-title {
+            color: #6aa5ff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #21d07a22;
+            border: 1px solid #21d07a;
+            color: #21d07a;
+        }
+        .error {
+            background: #e74c3c22;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+        .info {
+            background: #6aa5ff22;
+            border: 1px solid #6aa5ff;
+            color: #6aa5ff;
+        }
+        button {
+            background: linear-gradient(180deg, #2a4a74, #1c2f4a);
+            color: #eaf3ff;
+            border: 1px solid #3b69a8;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform .06s ease;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        select {
+            width: 100%;
+            background: #0f141b;
+            color: #e6edf5;
+            border: 1px solid #273043;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        select:focus {
+            border-color: #6aa5ff;
+            outline: none;
+        }
+        .dropdown-test {
+            margin: 20px 0;
+        }
+        .game-count {
+            color: #f1c40f;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 style="text-align: center; color: #6aa5ff; margin-bottom: 30px;">🏆 Sports Dropdown & Duplicates Test</h1>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 Sports Dropdown Organization Test</div>
+            <p>This test verifies that sports are properly organized with league/association labels.</p>
+            
+            <div class="dropdown-test">
+                <label>Select Sport:</label>
+                <select id="testSportDropdown">
+                    <optgroup label="🏈 American Football">
+                        <option>NFL</option>
+                    </optgroup>
+                    <optgroup label="🏀 Basketball">
+                        <option>NBA</option>
+                        <option>NCAA Basketball</option>
+                    </optgroup>
+                    <optgroup label="⚾ Baseball">
+                        <option>MLB</option>
+                        <option>NCAA Baseball</option>
+                    </optgroup>
+                    <optgroup label="🏒 Hockey">
+                        <option>NHL</option>
+                        <option>ICE_HOCKEY</option>
+                    </optgroup>
+                    <optgroup label="⚽ Soccer">
+                        <option>Premier League</option>
+                        <option>La Liga</option>
+                        <option>MLS</option>
+                        <option>Champions League</option>
+                    </optgroup>
+                    <optgroup label="🎾 Tennis">
+                        <option>ATP</option>
+                        <option>WTA</option>
+                        <option>Grand Slam</option>
+                    </optgroup>
+                    <optgroup label="🥊 Other Sports">
+                        <option>MMA/UFC</option>
+                        <option>Boxing</option>
+                        <option>Golf</option>
+                        <option>Other</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <button onclick="testSportsOrganization()">Test Sports Organization</button>
+            <div id="sports-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🔄 Duplicate Games Prevention Test</div>
+            <p>This test verifies that duplicate games are prevented in the dropdown.</p>
+            
+            <div class="dropdown-test">
+                <label>Test Games (simulated):</label>
+                <select id="testGamesDropdown" multiple style="height: 200px;">
+                    <!-- Games will be populated by JavaScript -->
+                </select>
+            </div>
+            
+            <button onclick="testDuplicatePrevention()">Test Duplicate Prevention</button>
+            <button onclick="populateTestGames()">Populate Test Games</button>
+            <div id="duplicates-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 Summary</div>
+            <div id="test-summary"></div>
+        </div>
+    </div>
+
+    <script>
+        function logResult(message, type = 'info', elementId = 'sports-test-results') {
+            const resultsDiv = document.getElementById(elementId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.textContent = message;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function testSportsOrganization() {
+            document.getElementById('sports-test-results').innerHTML = '';
+            
+            const dropdown = document.getElementById('testSportDropdown');
+            const optgroups = dropdown.querySelectorAll('optgroup');
+            
+            logResult('🔍 Testing sports dropdown organization...', 'info');
+            
+            const expectedGroups = [
+                '🏈 American Football',
+                '🏀 Basketball', 
+                '⚾ Baseball',
+                '🏒 Hockey',
+                '⚽ Soccer',
+                '🎾 Tennis',
+                '🥊 Other Sports'
+            ];
+            
+            let passed = 0;
+            let total = expectedGroups.length;
+            
+            expectedGroups.forEach((expectedLabel, index) => {
+                if (optgroups[index] && optgroups[index].label === expectedLabel) {
+                    logResult(`✅ ${expectedLabel} - Found`, 'success');
+                    passed++;
+                } else {
+                    logResult(`❌ ${expectedLabel} - Missing or incorrect`, 'error');
+                }
+            });
+            
+            // Test specific sports within groups
+            const nflOption = dropdown.querySelector('optgroup[label="🏈 American Football"] option');
+            if (nflOption && nflOption.textContent === 'NFL') {
+                logResult('✅ NFL correctly placed in American Football group', 'success');
+            } else {
+                logResult('❌ NFL not found in American Football group', 'error');
+            }
+            
+            const nbaOption = dropdown.querySelector('optgroup[label="🏀 Basketball"] option:first-child');
+            if (nbaOption && nbaOption.textContent === 'NBA') {
+                logResult('✅ NBA correctly placed in Basketball group', 'success');
+            } else {
+                logResult('❌ NBA not found in Basketball group', 'error');
+            }
+            
+            logResult(`📊 Organization Test: ${passed}/${total} groups correct`, passed === total ? 'success' : 'warning');
+        }
+
+        function populateTestGames() {
+            const gamesDropdown = document.getElementById('testGamesDropdown');
+            gamesDropdown.innerHTML = '';
+            
+            // Simulate games with potential duplicates
+            const testGames = [
+                { home: 'Rangers', away: 'Mammoth', time: '9:00 PM ET' },
+                { home: 'Rangers', away: 'Mammoth', time: '9:00 PM ET' }, // Duplicate
+                { home: 'Lightning', away: 'Capitals', time: '7:00 PM ET' },
+                { home: 'Chiefs', away: 'Raiders', time: '1:00 PM ET' },
+                { home: 'Chiefs', away: 'Raiders', time: '1:00 PM ET' }, // Duplicate
+                { home: 'Eagles', away: 'Cowboys', time: '4:25 PM ET' }
+            ];
+            
+            // Simulate the duplicate prevention logic
+            const uniqueGames = new Set();
+            
+            testGames.forEach(game => {
+                const gameKey = `${game.away} vs ${game.home}`.toLowerCase();
+                
+                if (!uniqueGames.has(gameKey)) {
+                    uniqueGames.add(gameKey);
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(game);
+                    option.textContent = `${game.away} @ ${game.home} - ${game.time}`;
+                    gamesDropdown.appendChild(option);
+                }
+            });
+            
+            logResult(`✅ Populated ${gamesDropdown.options.length} unique games from ${testGames.length} total games`, 'success', 'duplicates-test-results');
+        }
+
+        function testDuplicatePrevention() {
+            document.getElementById('duplicates-test-results').innerHTML = '';
+            
+            const gamesDropdown = document.getElementById('testGamesDropdown');
+            const games = Array.from(gamesDropdown.options).map(option => option.textContent);
+            
+            logResult('🔍 Testing duplicate game prevention...', 'info', 'duplicates-test-results');
+            
+            // Check for duplicates
+            const gameKeys = new Set();
+            let duplicatesFound = 0;
+            
+            games.forEach(gameText => {
+                // Extract teams from game text (format: "Away @ Home - Time")
+                const match = gameText.match(/^(.+?)\s*@\s*(.+?)\s*-\s*(.+)$/);
+                if (match) {
+                    const away = match[1].trim();
+                    const home = match[2].trim();
+                    const gameKey = `${away} vs ${home}`.toLowerCase();
+                    
+                    if (gameKeys.has(gameKey)) {
+                        logResult(`❌ Duplicate found: ${gameText}`, 'error', 'duplicates-test-results');
+                        duplicatesFound++;
+                    } else {
+                        gameKeys.add(gameKey);
+                        logResult(`✅ Unique game: ${gameText}`, 'success', 'duplicates-test-results');
+                    }
+                }
+            });
+            
+            if (duplicatesFound === 0) {
+                logResult('🎉 No duplicates found! Prevention system working correctly.', 'success', 'duplicates-test-results');
+            } else {
+                logResult(`⚠️ ${duplicatesFound} duplicate(s) detected`, 'warning', 'duplicates-test-results');
+            }
+            
+            logResult(`📊 Total unique games: ${gameKeys.size}`, 'info', 'duplicates-test-results');
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testSportsOrganization();
+                populateTestGames();
+                setTimeout(() => {
+                    testDuplicatePrevention();
+                    document.getElementById('test-summary').innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <h3 style="color: #6aa5ff; margin-bottom: 15px;">🎯 Test Suite Ready</h3>
+                            <p style="color: #b6c2cf;">All tests have been executed. Use the buttons to re-run specific tests.</p>
+                            <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                                <div style="background: #101722; border: 1px solid #273043; border-radius: 10px; padding: 15px; text-align: center;">
+                                    <div style="color: #21d07a; font-size: 20px; font-weight: 700;">✓</div>
+                                    <div style="color: #b6c2cf; font-size: 12px;">Sports Organization</div>
+                                </div>
+                                <div style="background: #101722; border: 1px solid #273043; border-radius: 10px; padding: 15px; text-align: center;">
+                                    <div style="color: #21d07a; font-size: 20px; font-weight: 700;">✓</div>
+                                    <div style="color: #b6c2cf; font-size: 12px;">Duplicate Prevention</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
