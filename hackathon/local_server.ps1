@@ -46,9 +46,9 @@ try {
                 $fileContent = [System.IO.File]::ReadAllBytes($fullPath)
                 $contentType = $mimeTypes[[System.IO.Path]::GetExtension($fullPath).ToLower()]
                 if ($contentType) {
-                    $response.ContentType64 = $contentType
+                    $response.ContentType = $contentType
                 } else {
-                    $response.ContentType64 = 'application/octet-stream'
+                    $response.ContentType = 'application/octet-stream'
                 }
                 $response.ContentLength64 = $fileContent.Length
                 $response.OutputStream.Write($fileContent, 0, $fileContent.Length)
