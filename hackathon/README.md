@@ -1,5 +1,7 @@
 # Responsible Betting Advisor
 
+Original hackathon notes. The repository root README is the code-verified description of this project.
+
 An AI-powered betting advisor with real-time sports data integration and emotional psychology analysis.
 
 ## Features

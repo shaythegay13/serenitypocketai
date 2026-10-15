@@ -30,7 +30,6 @@ if ($providerCfg.type -eq "oauth_device") {
         $token = Invoke-RestMethod -Method Post -Uri "https://github.com/login/oauth/access_token" -Body $tokenBody -ContentType "application/x-www-form-urlencoded" -Headers @{ Accept = "application/json" }
         if ($null -ne $token.access_token -and $token.access_token -ne "") {
             Write-Host "Connected to GitHub"
-            Write-Host ("Access token: {0}" -f $token.access_token)
             exit 0
         }
         if ($token.error -eq "authorization_pending") {

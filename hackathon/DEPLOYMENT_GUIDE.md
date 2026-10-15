@@ -14,14 +14,9 @@ This guide will help you deploy the Responsible Betting Advisor application to S
 3. Copy the service role key for server-side operations
 
 ## Step 2: Configure Environment Variables
-1. Copy `.env.example` to `.env`
-2. Fill in your Supabase credentials:
-   ```
-   SUPABASE_URL=your_project_url
-   SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   RAPIDAPI_KEY=your_rapidapi_key
-   ```
+1. Copy `.env.example` to `.env`. The example lists variable names only.
+2. Set values in `.env` on your machine. Do not commit `.env`.
+3. Names used by the deployment notes: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `RAPIDAPI_KEY`.
 
 ## Step 3: Deploy to Supabase
 1. Install Supabase CLI:
@@ -44,40 +39,26 @@ This guide will help you deploy the Responsible Betting Advisor application to S
    supabase db push
    ```
 
-5. Deploy the application:
-   ```bash
-   supabase functions deploy
-   ```
+The advisor is a static page. Publish that page with the host you use for `index.html`. There are no Edge Functions to deploy.
 
-## Step 4: Configure Authentication
-1. Go to your Supabase dashboard
-2. Navigate to Authentication > Settings
-3. Configure email templates if needed
-4. Set up OAuth providers if desired
+## Step 4: Database policies
+The migration enables row level security on `user_profiles`, `betting_analyses`, and `user_settings`. Each policy limits rows to `auth.uid()`.
 
-## Step 5: Set up Database Policies
-The migration file includes RLS policies for:
-- User profiles (users can only access their own)
-- Betting analyses (users can only access their own)
-- User settings (users can only access their own)
+The advisor page has no signup, login, or Supabase client. Applying the migration does not make the page save analyses.
 
-## Step 6: Test the Deployment
-1. Visit your deployed application URL
-2. Test the registration/login functionality
-3. Try creating a betting analysis
-4. Verify data is stored in the database
+## Step 5: Publish the static page
+`hackathon/vercel.json` rewrites every path to `index.html`. `hackathon/supabase/deploy.toml` describes a static deploy whose build command prints a message and whose output directory is the project folder. There is no `supabase/functions` directory, so `supabase functions deploy` has nothing to publish.
 
-## Features
-- **User Authentication**: Secure login/registration
-- **Betting Analysis**: Store and retrieve betting analyses
-- **User Profiles**: Personal betting preferences
-- **Data Security**: Row-level security policies
-- **Scalable**: Built on Supabase's infrastructure
+## Step 6: Check the running page
+1. Open the deployed URL or http://127.0.0.1:3000
+2. Load an example and click Analyze Scenario
+3. Confirm a recommendation renders in the browser
 
-## Monitoring
-- Check Supabase dashboard for database usage
-- Monitor function invocations
-- Review authentication logs
+## What the migration adds
+- Tables for profiles, analyses, and settings
+- Row level security policies for those tables
+
+The page itself stays a static demo. It does not authenticate users or write those tables.
 
 ## Support
 For issues with deployment, check:
@@ -86,13 +67,13 @@ For issues with deployment, check:
 - Database query performance
 
 ## Local Development
-To run locally:
-```bash
-# Start local Supabase
-supabase start
+From the repository root, with Node.js 18 or newer:
 
-# Run the local server
-powershell -ExecutionPolicy Bypass -File local_server.ps1
+```bash
+npm install
+npm start
 ```
 
-Visit http://localhost:3000 to see your application.
+Open http://127.0.0.1:3000. On Windows, `hackathon/local_server.ps1` can serve the same folder.
+
+The page does not connect to Supabase. `supabase start` is only needed if you are applying the SQL migration locally.

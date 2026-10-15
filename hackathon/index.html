@@ -203,7 +203,7 @@
     .pill { padding: 4px 8px; border-radius: 999px; font-size: 12px; border: 1px solid var(--px-border); background: #101722; color: var(--px-text); }
     .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--px-spacing); }
     .example-btn { font-size: 12px; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--px-spacing); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--px-spacing); grid-column: 1 / -1; }
     @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
     .muted { color: var(--px-text-subtle); font-size: 12px; }
   </style>
@@ -245,7 +245,7 @@
                   </optgroup>
                   <optgroup label="🏒 Hockey">
                     <option>NHL</option>
-                    <option>ICE_HOCKEY</option>
+                    <option selected>ICE_HOCKEY</option>
                   </optgroup>
                   <optgroup label="⚽ Soccer">
                     <option>Premier League</option>
@@ -452,8 +452,8 @@
         betType: 'Moneyline',
         betAmount: 20,
         budget: 500,
-        favoriteTeam: 'Lakers',
-        underdogTeam: 'Warriors',
+        favoriteTeam: 'Los Angeles Lakers',
+        underdogTeam: 'Golden State Warriors',
         favoriteRecord: '8-2',
         underdogRecord: '5-5',
         injuries: 'No major injuries',
@@ -470,8 +470,8 @@
         betType: 'Spread',
         betAmount: 75,
         budget: 400,
-        favoriteTeam: 'Cowboys',
-        underdogTeam: 'Giants',
+        favoriteTeam: 'Dallas Cowboys',
+        underdogTeam: 'Philadelphia Eagles',
         favoriteRecord: '6-3',
         underdogRecord: '4-5',
         injuries: 'Cowboys QB questionable',
@@ -484,11 +484,11 @@
         notes: 'Cowboys -3.5, home field advantage, division rivalry'
       },
       high: {
-        sport: 'Soccer',
+        sport: 'Premier League',
         betType: 'Parlay',
         betAmount: 200,
         budget: 500,
-        favoriteTeam: 'Man City',
+        favoriteTeam: 'Manchester City',
         underdogTeam: 'Burnley',
         favoriteRecord: '7-1-2',
         underdogRecord: '2-3-7',
@@ -517,8 +517,9 @@
         historyEl.value = ex.history;
         notesEl.value = ex.notes;
         
-        // Update team dropdowns for the selected sport
+        // Update team dropdowns and the game list for the selected sport
         populateTeamDropdowns(ex.sport);
+        populateCurrentGames(ex.sport);
         
         // Set team values and trigger auto-fill
         setTimeout(() => {
@@ -1069,7 +1070,8 @@
           { name: 'Dallas Cowboys', record: '7-4', injuries: 'QB Dak Prescott questionable', nextGame: '@ Eagles' },
           { name: 'San Francisco 49ers', record: '8-3', injuries: 'RB Christian McCaffrey out', nextGame: 'vs Seahawks' },
           { name: 'Buffalo Bills', record: '6-5', injuries: 'WR Stefon Diggs probable', nextGame: '@ Broncos' },
-          { name: 'Miami Dolphins', record: '7-4', injuries: 'QB Tua Tagovailoa questionable', nextGame: 'vs Patriots' }
+          { name: 'Miami Dolphins', record: '7-4', injuries: 'QB Tua Tagovailoa questionable', nextGame: 'vs Patriots' },
+          { name: 'Las Vegas Raiders', record: '5-6', injuries: 'Starting RB out', nextGame: '@ Chiefs' }
         ],
         weather: 'Clear, 45°F (indoor stadium)'
       },
@@ -1124,7 +1126,8 @@
           { name: 'Liverpool', record: '9-4-3', injuries: 'Mohamed Salah probable', nextGame: 'vs Everton' },
           { name: 'Chelsea', record: '8-5-3', injuries: 'Reece James questionable', nextGame: 'vs Arsenal' },
           { name: 'Manchester United', record: '7-6-3', injuries: 'Marcus Rashford probable', nextGame: '@ Tottenham' },
-          { name: 'Tottenham', record: '9-3-4', injuries: 'Harry Kane out', nextGame: 'vs Man United' }
+          { name: 'Tottenham', record: '9-3-4', injuries: 'Harry Kane out', nextGame: 'vs Man United' },
+          { name: 'Burnley', record: '3-8-5', injuries: 'Defensive issues', nextGame: '@ Manchester City' }
         ],
         weather: 'Rainy, 45°F'
       },
@@ -1835,9 +1838,9 @@
       renderRecommendation(recommendation);
     });
 
-    // Initialize team dropdowns on page load
-    populateTeamDropdowns('ICE_HOCKEY');
-    populateCurrentGames('ICE_HOCKEY');
+    // Match the game list to the sport selected in the form (ICE_HOCKEY by default)
+    populateTeamDropdowns(sportEl.value);
+    populateCurrentGames(sportEl.value);
   </script>
 </body>
 </html>
